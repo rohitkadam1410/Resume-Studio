@@ -4,6 +4,9 @@ import json
 import shutil
 from docx import Document
 from typing import List, Dict
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Ensure API key is set
 # openai.api_key = os.environ.get("OPENAI_API_KEY")
@@ -212,7 +215,7 @@ def analyze_gaps(docx_path: str, job_description: str, pdf_path: str = None) -> 
     resume_text = extract_text_from_docx(docx_path)
     
     if not resume_text.strip():
-        print("Warning: Extracted text is empty.")
+        logger.warning("Extracted text is empty.")
     
     client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
@@ -262,9 +265,9 @@ def analyze_gaps(docx_path: str, job_description: str, pdf_path: str = None) -> 
         -   Remove outdated skills or valid duplicates. Ensure key keywords from the JD are present if the user likely has them.
     
     Final Output Requirements:
-    -   Return specific, actionable edits.
-    -   Ensure 'target_text' acts as a reliable hook (enough context to be unique).
-    -   For 'suggestions', give high-level strategic advice for that section.
+        -   Return specific, actionable edits.
+        -   Ensure 'target_text' acts as a reliable hook (enough context to be unique).
+        -   For 'suggestions', give high-level strategic advice for that section.
     
     OUTPUT FORMAT (JSON):
     {{
@@ -313,7 +316,7 @@ def analyze_gaps(docx_path: str, job_description: str, pdf_path: str = None) -> 
         result.setdefault("job_title", "Unknown Role")
         
     except json.JSONDecodeError:
-        print("Failed to decode JSON from LLM")
+        logger.error("Failed to decode JSON from LLM")
         result = {"sections": [], "company_name": "Unknown", "job_title": "Unknown"}
 
     # 2. Separate Robust Scoring Step
@@ -337,7 +340,7 @@ def analyze_gaps(docx_path: str, job_description: str, pdf_path: str = None) -> 
         result["score_reasoning"] = scores.get("reasoning", "")
         
     except Exception as e:
-        print(f"Scoring failed: {e}")
+        logger.error(f"Scoring failed: {e}")
         result["initial_score"] = 0
         result["projected_score"] = 0
 
@@ -378,7 +381,7 @@ def calculate_scores(resume_text: str, job_description: str, changes_summary: st
         )
         return json.loads(response.choices[0].message.content)
     except Exception as e:
-        print(f"Error in calculate_scores: {e}")
+        logger.error(f"Error in calculate_scores: {e}")
         return {"initial_score": 0, "projected_score": 0}
 
 def generate_tailored_resume(docx_path: str, sections: List[Dict]) -> str:

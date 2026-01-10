@@ -12,3 +12,4 @@ requests
 google-generativeai
 python-jose[cryptography]
 passlib[bcrypt]
+aiosqlite
