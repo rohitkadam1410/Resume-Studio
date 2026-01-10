@@ -8,7 +8,7 @@ import os
 import uuid
 import json
 from database import get_session
-from models import SavedResume, UsageLog, Application
+from models import SavedResume, UsageLog, Application, User
 from dependencies import get_optional_user, get_current_user
 from schemas import EditsRequest, SaveResumeRequest
 from pdf_handler import pdf_to_docx
