@@ -1,0 +1,79 @@
+[Body] Rohit Kadam Pune, India •  • +91 7767880235 • 
+[Body] Passionate Data Science researcher with 4+ years of experience developing AI ML and GenAI-powered solutions in health tech and regulatory intelligence. Granted patent holder, published author, and PharmaSUG presenter. Actively exploring the intersection of AI and life sciences through academic and industry-led innovation. 
+[Body] PROFESSIONALEXPERIENCE
+[Body] TECHNICAL SKILLS
+[Body] Python, Data Science, Machine Learning, NLP, Generative AI, RAG, Azure, OpenAI, REST APIs,AWS (Bedrock),RASA 
+[Body] EDUCATION
+[Body] Bachelor of Technology (Mechanical Engineering): 7.62 CGPI Yashawantrao Chavan Institute of Science, Satara Higher Secondary (H.S.C): 81.38 % 
+[Body] Jul 2014 – May 2018 Satara, India Jun 2012- May 2014 
+[Body] Maharaja Sayajirao Vidyalaya, Satara 	Satara, India 
+[Body] Secondary School (S.S.C):  93.64 % 
+[Body]  Jun 2011- May 2012 
+[Body] CONFERENCES AND PRESENTATIONS
+[Body] PATENTS 
+[Body] PUBLICATIONS
+[Body Table] TATA CONSULTANCY SERVICES
+[Body Table] Pune, India 
+[Body Table] I.T. Analyst 
+[Body Table] Jan 2024 – Present 
+[Body Table] •
+[Body Table] Led the development of a GenAI-based medical assistant using Azure OpenAI which improved monitoring 
+[Body Table] process efficiency. 
+[Body Table] •
+[Body Table] Directed a team of 4 in building modular LLM Applications using RAG- for literature management system. 
+[Body Table] •
+[Body Table] Acted as the primary point of contact for stakeholders during the pilot phase, streamlining solution rollouts. 
+[Body Table] •
+[Body Table] Conducted cross-team brainstorming sessions and stakeholder interviews to define business use cases in 
+[Body Table] HealthTech. 
+[Body Table] System Engineer 
+[Body Table] Jul 2021 – Dec 2023 
+[Body Table] •
+[Body Table] Developed the Regulatory Intelligence Chatbot project using RASA and custom NLP, reducing query response 
+[Body Table] time for regulatory professionals 
+[Body Table] •
+[Body Table] Collaborated with SMEs and business leads to design AI-driven healthcare pilots. 
+[Body Table] •
+[Body Table] Served as Innovation Lead during the Incubation Bootcamp, resulting in the award-winning product idea 
+[Body Table] •
+[Body Table] Mentored three junior interns in Python, NLP, and AI ML fundamentals and developing POC solutions. 
+[Body Table] •
+[Body Table] Initiated a knowledge-sharing forum within the R&I team to accelerate GenAI adoption across verticals. 
+[Body Table] Assistant System Engineer 
+[Body Table] Sep 2020 – Jun 2021 
+[Body Table] •
+[Body Table] Contributed to data analysis and dashboard creation using Python for EHR Analytics. 
+[Body Table] •
+[Body Table] Supported early experiments with NLP for medical writing applications. 
+[Body Table] •
+[Body Table] Worked as an individual contributor in POC development to streamline EHR data to EDC 
+[Body Table] Projects 
+[Body Table] •
+[Body Table] GenAI Based medical monitoring assistant: 
+[Body Table] ▪
+[Body Table] Developed an intelligent assistant using Azure OpenAI to support real time medical monitoring and 
+[Body Table] decision making in clinical trials. 
+[Body Table] ▪
+[Body Table] API driven architecture to support medical monitoring queries and provide actionable insights 
+[Body Table] •
+[Body Table] Literature insights Platform: 
+[Body Table] ▪
+[Body Table] Designed literature search and analysis platform to extract key insights from medical literature and support 
+[Body Table] ICSR detection 
+[Body Table] ▪
+[Body Table] Using customized search, information retrieval and LLM based ICSR detection strategy automatic 
+[Body Table] categorization of article into distinct groups. 
+[Body Table] Rajarambapu Institute of Technology, Shivaji University 
+[Body Table] Sangli, India 
+[Body Table] PharmaSUG 2025 
+[Body Table]  San Diego, USA
+[Body Table] The paper discussed how Generative AI can strategically streamline signal detection, safety reviews, and eering by mining unstructured scientific and medical literature — driving faster, more informed clinical decisions.  
+[Body Table] PharmaSUG 2024 
+[Body Table]  Baltimore, USA 
+[Body Table] Presented a paper on how large language models (LLMs) coupled with next-generatiatabase, search and analytic engines etc. can create a comprehensive AI-based technology automation platform.  
+[Body Table] ●Granted: Automated Continuous Validation for Regulatory Compliance (2023) 
+[Body Table] •
+[Body Table] Proposed an automated approach for validating computer systems with dynamic components using synthetic 
+[Body Table] 	UAT and learning saturation testing: ●Filed: Automated Clinical Event and Endpoint Adjudication System (2024) 
+[Body Table] •••
+[Body Table] The Future of Regulatory Intelligence with Conversational AI (2022) – Discusses chatbot-driven access to regulatory knowledge.  AI/ML Approaches to Assisted Medical Writing – Part 1 & 2 (2021–2022) – Covers abstractive vs. extractive summarization methods.  Future of Clinical Trial Documentation Management using Blockchain (2021) – Examines eTMF digitization and audit compliance. 

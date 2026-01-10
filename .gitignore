@@ -1,0 +1,69 @@
+# Python
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+applications.db
+
+# Uploaded & Generated Files
+backend/application_resumes/
+backend/temp_*.pdf
+backend/temp_*.docx
+backend/*_tailored.pdf
+backend/*_tailored.docx
+
+# Global Ignore
+*.pdf
+*.docx
+
+# Debug Logs
+check_output.txt
+debug_output.txt
+debug_output_detailed.txt
+debug_reproduction.txt
+test_output.txt
+table_structure_analysis.txt
+
+# Environment
+.env
+.env.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node.js (Frontend)
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/

@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+python-multipart
+pdf2docx
+openai
+python-docx
+docx2pdf
+python-dotenv
+sqlmodel
+beautifulsoup4
+requests
+google-generativeai
+python-jose[cryptography]
+passlib[bcrypt]
