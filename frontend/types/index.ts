@@ -6,6 +6,11 @@ export interface EditSuggestion {
     status?: 'pending' | 'accepted' | 'rejected';
 }
 
+export interface ToastState {
+    message: string;
+    type: 'success' | 'error' | 'info';
+}
+
 export interface SectionAnalysis {
     section_name: string;
     original_text?: string;
