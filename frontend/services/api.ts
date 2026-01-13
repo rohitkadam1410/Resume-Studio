@@ -1,6 +1,6 @@
 import { AnalyzeResponse, GenerateResponse, JdResponse, ResumeSaveData, UsageResponse, SectionAnalysis } from '../types';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 const getHeaders = (token?: string | null, isMultipart: boolean = false): HeadersInit => {
     const headers: HeadersInit = {};

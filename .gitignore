@@ -18,10 +18,12 @@ applications.db
 
 # Uploaded & Generated Files
 backend/application_resumes/
+backend/saved_resumes/
 backend/temp_*.pdf
 backend/temp_*.docx
 backend/*_tailored.pdf
 backend/*_tailored.docx
+debug_extraction_output.txt
 
 # Global Ignore
 *.pdf
