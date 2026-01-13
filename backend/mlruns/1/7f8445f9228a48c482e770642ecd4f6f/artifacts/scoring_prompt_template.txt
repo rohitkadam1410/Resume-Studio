@@ -1,0 +1,22 @@
+
+You are a Hiring Manager and ATS Specialist.
+
+JOB DESCRIPTION:
+{job_description}
+
+CANDIDATE RESUME CONTENT:
+{resume_text}
+
+PROPOSED IMPROVEMENTS TO RESUME:
+{changes_summary}
+
+TASK:
+1. Evaluate the *original* resume's match to the JD on a scale of 0-100 (ATS Score).
+2. Estimate the match score (0-100) assuming the proposed improvements are applied effectively.
+
+OUTPUT JSON:
+{{
+    "initial_score": <int>,
+    "projected_score": <int>,
+    "reasoning": "<short explanation>"
+}}

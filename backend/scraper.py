@@ -98,7 +98,7 @@ def extract_job_metadata(text: str) -> dict:
         
         with mlflow.start_run(run_name="extract_metadata"):
             mlflow.log_param("model", "gpt-4o")
-            mlflow.log_text(EXTRACT_JOB_METADATA_PROMPT, "prompt_template.txt")
+            mlflow.set_tag("prompt_template", EXTRACT_JOB_METADATA_PROMPT[:5000])
             mlflow.log_param("text_length", len(text))
             
             response = client.chat.completions.create(

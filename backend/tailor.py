@@ -16,6 +16,7 @@ mlflow.set_tracking_uri(MLFLOW_DB_PATH)
 mlflow.set_experiment("Resume Tailor Analysis")
 
 # Ensure API key is set
+# Ensure API key is set
 # openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 from pydantic import BaseModel
@@ -233,7 +234,8 @@ def analyze_gaps(docx_path: str, job_description: str, pdf_path: str = None) -> 
     
     with mlflow.start_run(run_name="analyze_gaps"):
         mlflow.log_param("model", "gpt-4o")
-        mlflow.log_text(ANALYZE_GAPS_PROMPT_TEMPLATE, "prompt_template.txt")
+        # Store prompt in DB via Tags (limit 5000 chars)
+        mlflow.set_tag("prompt_template", ANALYZE_GAPS_PROMPT_TEMPLATE[:5000])
         mlflow.log_param("jd_length", len(job_description))
         mlflow.log_param("resume_length", len(resume_text))
         
@@ -312,7 +314,7 @@ def calculate_scores(resume_text: str, job_description: str, changes_summary: st
     
     # Note: If we want to log the SCORING prompt specifically, we can log it as a param too.
     if active_run:
-        mlflow.log_text(CALCULATE_SCORES_PROMPT_TEMPLATE, "scoring_prompt_template.txt")
+        mlflow.set_tag("scoring_prompt_template", CALCULATE_SCORES_PROMPT_TEMPLATE[:5000])
 
     try:
         response = client.chat.completions.create(

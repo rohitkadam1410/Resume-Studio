@@ -9,7 +9,11 @@ import logging
 from dotenv import load_dotenv
 
 # Load env variables
-load_dotenv()
+env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+if os.path.exists(env_path):
+    load_dotenv(env_path)
+else:
+    load_dotenv() # Fallback to default
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
