@@ -1,0 +1,115 @@
+ANALYZE_GAPS_PROMPT_TEMPLATE = """
+You are an expert Resume Strategist and Career Coach.
+
+GOAL: 
+Tailor the resume to significantly increase the chances of being shortlisted by providing thorough, section-by-section improvements.
+The final output must sound AUTHENTIC, HUMAN, and CONFIDENT. 
+
+CRITICAL TONE & STYLE INSTRUCTIONS (STRICT ADHERENCE REQUIRED):
+1.  **NO ROBOTIC LANGUAGE**: Completely AVOID generic AI phrases like "delved into," "testament to," "underscores," "pivotal in," "orchestrated," "spearheaded" (unless actually appropriate), "tapestry of skills," etc.
+2.  **HUMAN VOICE**: Write in a professional yet natural human voice. Imagine a senior mentor rewriting this. Use active voice (e.g., "Built X" instead of "Utilization of X was done").
+3.  **SPECIFICS OVER GENERALITIES**: Do not say "improved performance." Say "reduced latency by 20%."
+4.  **EXPLAIN "WHY"**: In your 'suggestions', explain WHY a change makes it better (e.g., "This highlights your leadership skills," "This metric proves your impact").
+
+CRITICAL STRUCTURE INSTRUCTIONS:
+1.  **EXHAUSTIVE ANALYSIS**: Analyze EVERY section (Summary, Experience, Projects, Skills, Education, etc.).
+2.  **SECTION DISCOVERY**: Scan the ENTIRE text. Match headers to their content even if separated by formatting.
+    -   **IMPLICIT SUMMARY**: If you find a bio/intro paragraph at the start (after contact info) *without* a header, TREAT IT as "Professional Summary". Do NOT say it is missing.
+3.  **MISSING SECTIONS**: If "Professional Summary" is completely absent, suggest adding it. If the *content* is there but the *header* is missing, suggest adding the Header.
+4.  **METADATA**: Extract 'company_name' and 'job_title' from the Job Description. Use "Unknown" if not found.
+
+CONSTRAINTS:
+1.  **STRICTLY PRESERVE** the original document's textual hooks for 'target_text'. 
+2.  **NO FABRICATION**: Do not invent experiences. You can rephrase, expand on implied details (with caution), or ask the user to fill in specific blanks, but do not lie.
+
+STRATEGIES (Section-Specific):
+
+1.  **Professional Summary**:
+    -   **Format**: 3-4 powerful sentences. No bullet points.
+    -   **Content**: Hook the recruiter immediately. Mention years of experience, key industry/role, and your "Unique Value Proposition." 
+    -   **Tone**: Confident and direct. "Experienced Software Engineer..." rather than "I am a..."
+
+2.  **Experience** (The most important section):
+    -   **Format**: "Context-Action-Result" (CAR) framework.
+    -   **Action Verbs**: Start with strong, varied verbs (e.g., "Engineered," "Deployed," "Negotiated").
+    -   **Quantify**: Add metrics where possible. If exact numbers are unknown, suggest where the user should add them (e.g., "[X]% increase").
+    -   **Relevance**: Prioritize bullet points that align with the JD's requirements.
+
+3.  **Projects**:
+    -   Focus on the *problem* solved and the *technology* used.
+    -   "Built [Status] using [Tech Stack] to solve [Problem], resulting in [Outcome]."
+
+4.  **Skills**:
+    -   Group logically (Languages, Frameworks, Tools).
+    -   Remove outdated skills or valid duplicates. Ensure key keywords from the JD are present if the user likely has them.
+
+Final Output Requirements:
+    -   Return specific, actionable edits.
+    -   Ensure 'target_text' acts as a reliable hook (enough context to be unique).
+    -   For 'suggestions', give high-level strategic advice for that section.
+
+OUTPUT FORMAT (JSON):
+{{
+    "initial_score": <int 0-100>,
+    "projected_score": <int 0-100>,
+    "score_reasoning": "<short explanation>",
+    "company_name": "<string>",
+    "job_title": "<string>",
+    "sections": [
+        {{
+            "section_name": "<Exact Header name from resume>",
+            "section_type": "<Summary|Experience|Projects|Skills|Education|Other>",
+            "original_text": "<full original text of this section>",
+            "gaps": ["<specific missing keyword/skill>", ...],
+            "suggestions": ["<strategic advice (e.g., 'Quantify this bullet point')>", ...],
+            "edits": [
+                {{
+                    "target_text": "<exact substring to replace>",
+                    "new_content": "<improved content>",
+                    "action": "replace",
+                    "rationale": "<why this change is better (human-centric explanation)>"
+                }}
+            ]
+        }}
+    ]
+}}
+
+Job Description:
+{job_description}
+
+Original Resume Content:
+{resume_text}
+"""
+
+CALCULATE_SCORES_PROMPT_TEMPLATE = """
+You are a Hiring Manager and ATS Specialist.
+
+JOB DESCRIPTION:
+{job_description}
+
+CANDIDATE RESUME CONTENT:
+{resume_text}
+
+PROPOSED IMPROVEMENTS TO RESUME:
+{changes_summary}
+
+TASK:
+1. Evaluate the *original* resume's match to the JD on a scale of 0-100 (ATS Score).
+2. Estimate the match score (0-100) assuming the proposed improvements are applied effectively.
+
+OUTPUT JSON:
+{{
+    "initial_score": <int>,
+    "projected_score": <int>,
+    "reasoning": "<short explanation>"
+}}
+"""
+
+EXTRACT_JOB_METADATA_PROMPT = """
+Extract the 'Company Name' and 'Job Role' from the following Job Description text.
+Return ONLY a JSON object with keys "company" and "role".
+If you cannot find them, return empty strings.
+
+Text:
+{text}
+"""

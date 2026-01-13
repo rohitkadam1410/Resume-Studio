@@ -5,8 +5,15 @@ import shutil
 from docx import Document
 from typing import List, Dict
 import logging
+import mlflow
+from prompts import ANALYZE_GAPS_PROMPT_TEMPLATE, CALCULATE_SCORES_PROMPT_TEMPLATE
 
 logger = logging.getLogger(__name__)
+
+# Configure MLflow
+MLFLOW_DB_PATH = "sqlite:///mlflow.db"
+mlflow.set_tracking_uri(MLFLOW_DB_PATH)
+mlflow.set_experiment("Resume Tailor Analysis")
 
 # Ensure API key is set
 # openai.api_key = os.environ.get("OPENAI_API_KEY")
@@ -219,159 +226,94 @@ def analyze_gaps(docx_path: str, job_description: str, pdf_path: str = None) -> 
     
     client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-    prompt = f"""
-    You are an expert Resume Strategist and Career Coach.
-    
-    GOAL: 
-    Tailor the resume to significantly increase the chances of being shortlisted by providing thorough, section-by-section improvements.
-    The final output must sound AUTHENTIC, HUMAN, and CONFIDENT. 
-    
-    CRITICAL TONE & STYLE INSTRUCTIONS (STRICT ADHERENCE REQUIRED):
-    1.  **NO ROBOTIC LANGUAGE**: Completely AVOID generic AI phrases like "delved into," "testament to," "underscores," "pivotal in," "orchestrated," "spearheaded" (unless actually appropriate), "tapestry of skills," etc.
-    2.  **HUMAN VOICE**: Write in a professional yet natural human voice. Imagine a senior mentor rewriting this. Use active voice (e.g., "Built X" instead of "Utilization of X was done").
-    3.  **SPECIFICS OVER GENERALITIES**: Do not say "improved performance." Say "reduced latency by 20%."
-    4.  **EXPLAIN "WHY"**: In your 'suggestions', explain WHY a change makes it better (e.g., "This highlights your leadership skills," "This metric proves your impact").
-    
-    CRITICAL STRUCTURE INSTRUCTIONS:
-    1.  **EXHAUSTIVE ANALYSIS**: Analyze EVERY section (Summary, Experience, Projects, Skills, Education, etc.).
-    2.  **SECTION DISCOVERY**: Scan the ENTIRE text. Match headers to their content even if separated by formatting.
-        -   **IMPLICIT SUMMARY**: If you find a bio/intro paragraph at the start (after contact info) *without* a header, TREAT IT as "Professional Summary". Do NOT say it is missing.
-    3.  **MISSING SECTIONS**: If "Professional Summary" is completely absent, suggest adding it. If the *content* is there but the *header* is missing, suggest adding the Header.
-    4.  **METADATA**: Extract 'company_name' and 'job_title' from the Job Description. Use "Unknown" if not found.
-    
-    CONSTRAINTS:
-    1.  **STRICTLY PRESERVE** the original document's textual hooks for 'target_text'. 
-    2.  **NO FABRICATION**: Do not invent experiences. You can rephrase, expand on implied details (with caution), or ask the user to fill in specific blanks, but do not lie.
-    
-    STRATEGIES (Section-Specific):
-    
-    1.  **Professional Summary**:
-        -   **Format**: 3-4 powerful sentences. No bullet points.
-        -   **Content**: Hook the recruiter immediately. Mention years of experience, key industry/role, and your "Unique Value Proposition." 
-        -   **Tone**: Confident and direct. "Experienced Software Engineer..." rather than "I am a..."
-    
-    2.  **Experience** (The most important section):
-        -   **Format**: "Context-Action-Result" (CAR) framework.
-        -   **Action Verbs**: Start with strong, varied verbs (e.g., "Engineered," "Deployed," "Negotiated").
-        -   **Quantify**: Add metrics where possible. If exact numbers are unknown, suggest where the user should add them (e.g., "[X]% increase").
-        -   **Relevance**: Prioritize bullet points that align with the JD's requirements.
-    
-    3.  **Projects**:
-        -   Focus on the *problem* solved and the *technology* used.
-        -   "Built [Status] using [Tech Stack] to solve [Problem], resulting in [Outcome]."
-    
-    4.  **Skills**:
-        -   Group logically (Languages, Frameworks, Tools).
-        -   Remove outdated skills or valid duplicates. Ensure key keywords from the JD are present if the user likely has them.
-    
-    Final Output Requirements:
-        -   Return specific, actionable edits.
-        -   Ensure 'target_text' acts as a reliable hook (enough context to be unique).
-        -   For 'suggestions', give high-level strategic advice for that section.
-    
-    OUTPUT FORMAT (JSON):
-    {{
-        "initial_score": <int 0-100>,
-        "projected_score": <int 0-100>,
-        "score_reasoning": "<short explanation>",
-        "company_name": "<string>",
-        "job_title": "<string>",
-        "sections": [
-            {{
-                "section_name": "<Exact Header name from resume>",
-                "section_type": "<Summary|Experience|Projects|Skills|Education|Other>",
-                "original_text": "<full original text of this section>",
-                "gaps": ["<specific missing keyword/skill>", ...],
-                "suggestions": ["<strategic advice (e.g., 'Quantify this bullet point')>", ...],
-                "edits": [
-                    {{
-                        "target_text": "<exact substring to replace>",
-                        "new_content": "<improved content>",
-                        "action": "replace",
-                        "rationale": "<why this change is better (human-centric explanation)>"
-                    }}
-                ]
-            }}
-        ]
-    }}
-    
-    Job Description:
-    {job_description}
-    
-    Original Resume Content:
-    {resume_text}
-    """
-    
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.2,
-        response_format={ "type": "json_object" }
+    prompt = ANALYZE_GAPS_PROMPT_TEMPLATE.format(
+        job_description=job_description,
+        resume_text=resume_text
     )
     
-    try:
-        result = json.loads(response.choices[0].message.content)
-        # Ensure extracted metadata exists
-        result.setdefault("company_name", "Unknown Company")
-        result.setdefault("job_title", "Unknown Role")
+    with mlflow.start_run(run_name="analyze_gaps"):
+        mlflow.log_param("model", "gpt-4o")
+        mlflow.log_text(ANALYZE_GAPS_PROMPT_TEMPLATE, "prompt_template.txt")
+        mlflow.log_param("jd_length", len(job_description))
+        mlflow.log_param("resume_length", len(resume_text))
         
-    except json.JSONDecodeError:
-        logger.error("Failed to decode JSON from LLM")
-        result = {"sections": [], "company_name": "Unknown", "job_title": "Unknown"}
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2,
+            response_format={ "type": "json_object" }
+        )
+        
+        try:
+            result = json.loads(response.choices[0].message.content)
+            # Ensure extracted metadata exists
+            result.setdefault("company_name", "Unknown Company")
+            result.setdefault("job_title", "Unknown Role")
+            
+            # Log some basic metrics if available
+            if "sections" in result:
+                mlflow.log_metric("num_sections", len(result["sections"]))
+            
+        except json.JSONDecodeError:
+            logger.error("Failed to decode JSON from LLM")
+            result = {"sections": [], "company_name": "Unknown", "job_title": "Unknown"}
+            mlflow.log_param("error", "JSONDecodeError")
 
-    # 2. Separate Robust Scoring Step
-    try:
-        # Summarize proposed changes for the scorer
-        changes_summary = []
-        if "sections" in result:
-            for section in result["sections"]:
-                name = section.get("section_name", "Unknown")
-                gaps = section.get("gaps", [])
-                suggestions = section.get("suggestions", [])
-                edits = section.get("edits", [])
-                changes_summary.append(f"Section {name}: Found {len(gaps)} gaps. {len(suggestions)} suggestions. Suggested {len(edits)} edits.")
-                if suggestions:
-                    changes_summary.append(f" - Advice: {'; '.join(suggestions[:3])}")
-        
-        changes_text = "\n".join(changes_summary)
-        scores = calculate_scores(resume_text, job_description, changes_text)
-        result["initial_score"] = scores.get("initial_score", 0)
-        result["projected_score"] = scores.get("projected_score", 0)
-        result["score_reasoning"] = scores.get("reasoning", "")
-        
-    except Exception as e:
-        logger.error(f"Scoring failed: {e}")
-        result["initial_score"] = 0
-        result["projected_score"] = 0
+        # 2. Separate Robust Scoring Step
+        try:
+            # Summarize proposed changes for the scorer
+            changes_summary = []
+            if "sections" in result:
+                for section in result["sections"]:
+                    name = section.get("section_name", "Unknown")
+                    gaps = section.get("gaps", [])
+                    suggestions = section.get("suggestions", [])
+                    edits = section.get("edits", [])
+                    changes_summary.append(f"Section {name}: Found {len(gaps)} gaps. {len(suggestions)} suggestions. Suggested {len(edits)} edits.")
+                    if suggestions:
+                        changes_summary.append(f" - Advice: {'; '.join(suggestions[:3])}")
+            
+            changes_text = "\n".join(changes_summary)
+            scores = calculate_scores(resume_text, job_description, changes_text)
+            result["initial_score"] = scores.get("initial_score", 0)
+            result["projected_score"] = scores.get("projected_score", 0)
+            result["score_reasoning"] = scores.get("reasoning", "")
+            
+            mlflow.log_metric("initial_score", result["initial_score"])
+            mlflow.log_metric("projected_score", result["projected_score"])
+            
+        except Exception as e:
+            logger.error(f"Scoring failed: {e}")
+            result["initial_score"] = 0
+            result["projected_score"] = 0
+            mlflow.log_param("scoring_error", str(e))
 
-    return result
+        return result
 
 def calculate_scores(resume_text: str, job_description: str, changes_summary: str) -> Dict:
     client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-    prompt = f"""
-    You are a Hiring Manager and ATS Specialist.
     
-    JOB DESCRIPTION:
-    {job_description[:2000]}...
+    prompt = CALCULATE_SCORES_PROMPT_TEMPLATE.format(
+        job_description=job_description[:2000], # Truncated in original too, keeping consistent but cleaner
+        resume_text=resume_text[:3000],
+        changes_summary=changes_summary
+    )
     
-    CANDIDATE RESUME CONTENT:
-    {resume_text[:3000]}...
+    # We create a nested run or a separate run? Usually scoring is part of the parent task.
+    # For simplicity, we'll just log this as part of the parent run if it's active.
+    # But calculate_scores might be called independently? The current flow calls it FROM analyze_gaps.
+    # To be safe, checking active run.
     
-    PROPOSED IMPROVEMENTS TO RESUME:
-    {changes_summary}
+    active_run = mlflow.active_run()
+    if not active_run:
+        # If called independently, start a run.
+        # But here it's helper. Let's just log params to active run if exists.
+        pass
     
-    TASK:
-    1. Evaluate the *original* resume's match to the JD on a scale of 0-100 (ATS Score).
-    2. Estimate the match score (0-100) assuming the proposed improvements are applied effectively.
-    
-    OUTPUT JSON:
-    {{
-        "initial_score": <int>,
-        "projected_score": <int>,
-        "reasoning": "<short explanation>"
-    }}
-    """
-    
+    # Note: If we want to log the SCORING prompt specifically, we can log it as a param too.
+    if active_run:
+        mlflow.log_text(CALCULATE_SCORES_PROMPT_TEMPLATE, "scoring_prompt_template.txt")
+
     try:
         response = client.chat.completions.create(
             model="gpt-4o",
