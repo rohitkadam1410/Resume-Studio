@@ -1,12 +1,10 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-from database import init_db
-from routers import auth, applications, resume, survey
-import uvicorn
 import os
 import logging
 from dotenv import load_dotenv
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Load env variables
 env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
@@ -15,9 +13,12 @@ if os.path.exists(env_path):
 else:
     load_dotenv() # Fallback to default
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from database import init_db
+from routers import auth, applications, resume, survey
+import uvicorn
 
 app = FastAPI()
 

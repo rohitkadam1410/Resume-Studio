@@ -75,7 +75,7 @@ async def analyze_resume(
         ))
         usage_count = len(result.all())
         
-        if usage_count >= 2:
+        if usage_count >= 20:
             raise HTTPException(
                 status_code=403, 
                 detail="Daily free limit reached. Please login for unlimited access."
