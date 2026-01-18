@@ -27,17 +27,35 @@ class Edit(BaseModel):
     action: str
     rationale: str
 
+class RoleAnalysis(BaseModel):
+    identity: str
+    keywords: List[str]
+    seniority_signals: List[str]
+    industry_context: str
+    geographic_expectations: str
+
+class ResumeDiagnosis(BaseModel):
+    strong_matches: List[str]
+    gaps: List[str]
+    misalignments: List[str]
+    ats_risks: List[str]
+
 class SectionAnalysis(BaseModel):
     section_name: str
     section_type: str = "Other"
+    original_text: str = ""
     gaps: List[str]
     suggestions: List[str]
     edits: List[Edit]
 
 class AnalysisResult(BaseModel):
+    role_analysis: RoleAnalysis
+    diagnosis: ResumeDiagnosis
+    proposed_title: str
+    proposed_summary: str
     sections: List[SectionAnalysis]
-    initial_score: int
-    projected_score: int
+    initial_score: int = 0
+    projected_score: int = 0
     company_name: str = "Unknown Company"
     job_title: str = "Unknown Role"
     score_reasoning: str = ""

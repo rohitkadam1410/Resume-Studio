@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '../services/api';
-import { SectionAnalysis, ToastState } from '../types';
+import { SectionAnalysis, ToastState, RoleAnalysis, ResumeDiagnosis } from '../types';
 
 const TEMP_STATE_KEY = 'tailor_temp_state';
 
@@ -28,6 +28,12 @@ export const useResumeAnalysis = ({ isAuthenticated, usageCount, setUsageCount }
     const [uploadedFilename, setUploadedFilename] = useState('');
     const [initialScore, setInitialScore] = useState(0);
     const [projectedScore, setProjectedScore] = useState(0);
+
+    // New Analysis Data
+    const [roleAnalysis, setRoleAnalysis] = useState<RoleAnalysis | undefined>(undefined);
+    const [diagnosis, setDiagnosis] = useState<ResumeDiagnosis | undefined>(undefined);
+    const [proposedTitle, setProposedTitle] = useState<string | undefined>(undefined);
+    const [proposedSummary, setProposedSummary] = useState<string | undefined>(undefined);
 
     // Job Metadata State
     const [companyName, setCompanyName] = useState('');
@@ -109,6 +115,10 @@ export const useResumeAnalysis = ({ isAuthenticated, usageCount, setUsageCount }
         setStatus('Uploading and Analyzing...');
         setDownloadUrl('');
         setSections(null);
+        setRoleAnalysis(undefined);
+        setDiagnosis(undefined);
+        setProposedTitle(undefined);
+        setProposedSummary(undefined);
 
         try {
             const token = localStorage.getItem('auth_token');
@@ -123,6 +133,12 @@ export const useResumeAnalysis = ({ isAuthenticated, usageCount, setUsageCount }
                 setUploadedFilename(data.filename);
                 setInitialScore(data.initial_score || 0);
                 setProjectedScore(data.projected_score || 0);
+
+                // Set new fields
+                setRoleAnalysis(data.role_analysis);
+                setDiagnosis(data.diagnosis);
+                setProposedTitle(data.proposed_title);
+                setProposedSummary(data.proposed_summary);
 
                 if (data.company_name && data.company_name !== "Unknown Company") {
                     if (!companyName || companyName === "Unknown Company") setCompanyName(data.company_name);
@@ -271,6 +287,7 @@ export const useResumeAnalysis = ({ isAuthenticated, usageCount, setUsageCount }
         jdMode, setJdMode,
         jdUrl, setJdUrl, isFetchingJd,
         sections, setSections,
+        roleAnalysis, diagnosis, proposedTitle, proposedSummary,
         uploadedFilename,
         initialScore, projectedScore,
         companyName, setCompanyName,

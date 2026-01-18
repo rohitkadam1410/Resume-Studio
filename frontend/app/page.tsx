@@ -26,6 +26,7 @@ export default function TailorPage() {
         jdMode, setJdMode,
         jdUrl, setJdUrl, isFetchingJd,
         sections, setSections,
+        roleAnalysis, diagnosis, proposedTitle, proposedSummary,
         initialScore, projectedScore,
         companyName, setCompanyName,
         jobRole, setJobRole,
@@ -132,6 +133,10 @@ export default function TailorPage() {
                             {sections && !savedResumeId && (
                                 <AnalysisReview
                                     sections={sections}
+                                    roleAnalysis={roleAnalysis}
+                                    diagnosis={diagnosis}
+                                    proposedTitle={proposedTitle}
+                                    proposedSummary={proposedSummary}
                                     isAuthenticated={isAuthenticated}
                                     isSaving={isSaving}
                                     onSaveClick={() => setShowSaveModal(true)}

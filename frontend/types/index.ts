@@ -43,7 +43,26 @@ export interface JdResponse {
     role?: string;
 }
 
+export interface RoleAnalysis {
+    identity: string;
+    keywords: string[];
+    seniority_signals: string[];
+    industry_context: string;
+    geographic_expectations: string;
+}
+
+export interface ResumeDiagnosis {
+    strong_matches: string[];
+    gaps: string[];
+    misalignments: string[];
+    ats_risks: string[];
+}
+
 export interface AnalyzeResponse {
+    role_analysis?: RoleAnalysis;
+    diagnosis?: ResumeDiagnosis;
+    proposed_title?: string;
+    proposed_summary?: string;
     sections?: SectionAnalysis[];
     filename: string;
     initial_score?: number;
