@@ -116,9 +116,9 @@ export const AnalysisReview: React.FC<AnalysisReviewProps> = ({
                         <div key={sectionIdx} className="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm">
                             <h3 className="text-xl font-bold text-slate-800 mb-4 border-b border-slate-200 pb-2">{section.section_name}</h3>
 
-                            {/* Gaps ONLY */}
+                            {/* Gaps */}
                             {section.gaps && section.gaps.length > 0 ? (
-                                <div className="mb-0 bg-orange-50 p-4 rounded-xl border border-orange-100">
+                                <div className="mb-4 bg-orange-50 p-4 rounded-xl border border-orange-100">
                                     <h4 className="text-sm font-bold uppercase text-orange-600 tracking-wide mb-2 flex items-center">
                                         <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                                         Identified Gaps
@@ -130,7 +130,22 @@ export const AnalysisReview: React.FC<AnalysisReviewProps> = ({
                                     </ul>
                                 </div>
                             ) : (
-                                <p className="text-slate-500 italic text-sm">No specific gaps identified for this section.</p>
+                                <p className="text-slate-500 italic text-sm mb-4">No specific gaps identified for this section.</p>
+                            )}
+
+                            {/* Strategic Advice (Suggestions) */}
+                            {section.suggestions && section.suggestions.length > 0 && (
+                                <div className="mb-0 bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                    <h4 className="text-sm font-bold uppercase text-blue-600 tracking-wide mb-2 flex items-center">
+                                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        Strategic Advice
+                                    </h4>
+                                    <ul className="list-disc list-inside space-y-1 text-sm text-slate-700">
+                                        {section.suggestions.map((suggestion, i) => (
+                                            <li key={i}>{suggestion}</li>
+                                        ))}
+                                    </ul>
+                                </div>
                             )}
                         </div>
                     ))}
