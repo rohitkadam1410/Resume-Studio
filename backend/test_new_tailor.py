@@ -26,7 +26,7 @@ import tailor
 tailor.extract_text_from_docx = lambda x: "John Doe\nSoftware Engineer\nExperience: Python, Java. Built stuff."
 
 def test_analyze():
-    print("Testing analyze_gaps with new prompt...")
+    print("Testing analyze_gaps with new prompt   ...")
     try:
         result = analyze_gaps("dummy.docx", JD)
         print("Success! JSON parsed and validated.")
