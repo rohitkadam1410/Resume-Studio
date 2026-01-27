@@ -46,7 +46,41 @@ app.include_router(survey.router)
 
 @app.on_event("startup")
 def on_startup():
+    """Initialize database and start background tasks."""
     init_db()
+    
+    # Clean up old temp files on startup
+    from cleanup import cleanup_on_startup
+    try:
+        cleanup_on_startup(max_age_hours=24)
+    except Exception as e:
+        logger.error(f"Startup cleanup failed: {e}", exc_info=True)
+    
+    # Schedule periodic cleanup every 6 hours
+    from apscheduler.schedulers.asyncio import AsyncIOScheduler
+    from cleanup import cleanup_temp_files
+    
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(
+        cleanup_temp_files, 
+        'interval', 
+        hours=6,
+        kwargs={'max_age_hours': 24},
+        id='temp_file_cleanup',
+        replace_existing=True
+    )
+    scheduler.start()
+    logger.info("Scheduled temp file cleanup every 6 hours")
+    
+    # Store scheduler in app state for shutdown
+    app.state.scheduler = scheduler
+
+@app.on_event("shutdown")
+def on_shutdown():
+    """Cleanup on application shutdown."""
+    if hasattr(app.state, 'scheduler'):
+        app.state.scheduler.shutdown()
+        logger.info("Scheduler shut down successfully")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
