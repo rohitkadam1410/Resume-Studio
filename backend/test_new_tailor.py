@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Dummy JD
 JD = """
-Software Engineer
+Software Engineer / developer
 
 We are looking for a Senior Software Engineer to join our team. 
 Must have experience with Python, React, and AWS.
